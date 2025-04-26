@@ -5,19 +5,17 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 // Scene, camera, and renderer setup
 const scene = new THREE.Scene()
-const camera = new THREE.PerspectiveCamera(160, window.innerWidth/window.innerHeight, 0.1, 1000)
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector('#bg')
 })
 //
+camera.position.set(50,100,0)
+camera.lookAt(0,0,0)
 renderer.setPixelRatio(window.devicePixelRatio)
 renderer.setSize(window.innerWidth, window.innerHeight)
-camera.position.setZ(0)
-camera.position.setY(40)
-camera.position.setX(30)
 renderer.setClearColor(0x000000, 1)
 // camera.position.set(20, 30, 20)
-camera.lookAt(10,0.01,0.90)
 
 renderer.render(scene, camera)
 // model creations geometry
@@ -36,6 +34,11 @@ const planeMaterial = new THREE.MeshBasicMaterial( { color: 0x228B22, side: THRE
 const terrain = new THREE.Mesh( planeGeometry, planeMaterial );
 terrain.rotation.x = Math.PI / 2
 terrain.position.set(0,-20,0)
+// walkerExample 
+const walker = new THREE.Mesh(
+  new THREE.SphereGeometry( 1, 32, 32 ),
+  new THREE.MeshBasicMaterial( { color: 0x00ff00 } )
+)
 
 scene.fog = new THREE.Fog(0x000000, 0, 1000)
 
@@ -70,10 +73,43 @@ const curveGeometry = new THREE.BufferGeometry().setFromPoints(curve.getPoints(1
 const curveMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 })
 const curveObject = new THREE.Line(curveGeometry, curveMaterial)
 
+// event listener for button click
+document.getElementById('startButton').addEventListener('click', () => {
+  moving = !moving;
 
-scene.add(terrain,curveObject)
+  const startPoint = curve.getPointAt(0);
+  const startTangent = curve.getTangentAt(0);
+  document.getElementById('startButton').style.display = moving ? 'none' : 'block';
+  camera.position.copy(startPoint);
+  camera.position.y += 3;
+  camera.lookAt(startPoint.clone().add(startTangent));
+});
+let progress = 0;
+let moving = false;
+
+scene.add(terrain,curveObject, walker)
+
+// animation function 
 function animate() {
   requestAnimationFrame(animate)
+
+  if(moving && progress <= 1) {
+    progress += 0.0010;
+    const point = curve.getPointAt(progress);
+    const tangent= curve.getTangentAt(progress);
+    // walker adjustments to view Path
+    walker.position.copy(point);
+    walker.position.y += 3;
+    walker.lookAt(point.clone().add(tangent));
+
+    //  testing-walker POV
+    camera.position.set(
+      point.x + 30,  
+      point.y + 20,
+      point.z + 30
+    );
+    camera.lookAt(walker.position);;
+  }
 
   // cylinder.rotation.x += 0.01
   // cylinder.rotation.y += 0.01

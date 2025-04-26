@@ -1,23 +1,32 @@
-canvas {
+body {
+  margin: 0;
+  padding: 0;
+}
+#canvas {
   position:fixed;
   top:0;
   left:0;
+  display: block;
 }
 
-
-#startBtn {
+#app {
   position: absolute;
+  width: auto;
+  height: auto;
   top: 50%;
   left: 50%;
+}
+#startBtn {
+  position: absolute;
   transform: translate(-50%, -50%);
   padding: 1em 2em;
   font-size: 1.5em;
   background-color: #228B22;
-  color: white;
+  color: rgb(130, 104, 25);
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  z-index: 110;
+  z-index: 10;
 }
 
 #startBtn:hover {
