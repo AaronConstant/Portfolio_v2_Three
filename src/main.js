@@ -121,7 +121,8 @@ for (let i = 0.02; i <= 1; i += 0.04) {
     point.x + (Math.random() > 0.5 ? 8 : -5), 
     point.y, 
     point.z + (Math.random() * 4 - 2)
-  );
+  )
+  tree.scale.set(Math.random() * (1.5-0.8) + 0.8, Math.random() * 1 + 0.5, Math.random() * 0.7 + 0.6);
 
   treesGroup.add(tree);
 }
